@@ -217,6 +217,25 @@ class MainTest < ActiveRecordTestCase
     assert_equal 1, c.workflow_spec.states[:supplemental].meta[:importance]
   end
 
+  test 'access event meta through iterator' do
+    c = Class.new
+    c.class_eval do
+      include Workflow
+		  workflow do
+			  state :main do
+				  event :submit, :meta => {:importance => 8}
+				  event :close, :meta => {:importance => 8}
+			  end
+			  state :supplemental, :meta => {:importance => 1}
+		  end
+	end
+
+	c.workflow_spec.current_state.events_with_meta do |event, meta|
+		assert_not_nil meta
+		assert_equal 8, meta[:importance]
+	end
+  end
+
   test 'initial state' do
     c = Class.new
     c.class_eval do
