@@ -23,6 +23,11 @@ module Workflow
       node
     end
 
+	def events_with_meta
+		events.each do |symbol|
+			yield symbol, self.events[symbol].meta
+		end
+	end
 
     if RUBY_VERSION >= '1.9'
       include Comparable
